@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+    span.s2 {font: 12.0px 'Lucida Grande'; font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Multi-Camera Live Production Workshop&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- Chosen Palette: Calm Neutrals (Tailwind Grays, Indigo accent) --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- Application Structure Plan: A tabbed, task-oriented SPA. The linear lesson plan is non-ideal for live class management. This structure uses main tabs (Overview, Roles, Setup, Timeline, Troubleshooting) to allow the instructor to non-linearly access the exact information needed *when* it's needed. For example, the 'Roles' tab organizes all 22 student roles with filters, and the 'Timeline' tab acts as an interactive accordion, allowing the instructor to expand/collapse each phase of the 90-min class as it happens. This design prioritizes in-the-moment usability over the report's original linear flow. --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- Visualization &amp; Content Choices: Report Info: Role Assignments (22 students) -&gt; Goal: Organize/Inform -&gt; Viz: Interactive "card" layout -&gt; Interaction: JS-powered buttons to filter by 'Control Room' or 'Studio Floor' -&gt; Justification: Eases the cognitive load of assigning 22 roles by grouping them. | Report Info: Class Timeline (5 Phases) -&gt; Goal: Organize (Process) -&gt; Viz: HTML/CSS Accordion -&gt; Interaction: JS click to expand/collapse each phase's details -&gt; Justification: Allows instructor to focus only on the current class phase. | Report Info: Troubleshooting Table -&gt; Goal: Inform/Organize -&gt; Viz: HTML Table -&gt; Interaction: JS search bar to filter 'Issue' column -&gt; Justification: Provides rapid, high-pressure problem solving. | Report Info: Setup Guide -&gt; Goal: Organize (Process) -&gt; Viz: Inner tabs for each camera -&gt; Interaction: JS click to show/hide setup steps -&gt; Justification: Breaks down complex parallel setup into simple, focused steps. This report contains no data suitable for Chart.js/Plotly. --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.tab-content {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: none;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.tab-content.active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: block;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.tab-btn.active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-bottom-color: #4f46e5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #4f46e5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.accordion-content {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>max-height: 0;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: max-height 0.3s ease-out;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.accordion-header.active + .accordion-content {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>max-height: 1000px;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: max-height 0.5s ease-in;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.accordion-header .icon {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: rotate(0deg);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: transform 0.3s ease;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.accordion-header.active .icon {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: rotate(180deg);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.setup-tab-btn.active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #4f46e5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.role-filter-btn.active {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #4f46e5;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body class="bg-gray-50 font-sans antialiased text-gray-900"&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8"&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- Header --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;header class="mb-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"&gt;Multi-Camera Live Production Workshop&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="mt-3 flex flex-wrap gap-x-6 gap-y-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700"&gt;75 Min Duration&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700"&gt;22 Students&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700"&gt;4 Camera Setup&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700"&gt;OBS &amp; VDO.Ninja&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- Main Navigation Tabs --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;nav class="mb-6 border-b border-gray-200"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500" id="main-tabs"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;li class="mr-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 active" data-target="overview"&gt;Overview&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;li class="mr-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="roles"&gt;Role Assignments&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;li class="mr-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="setup"&gt;Setup Guide&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;li class="mr-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="timeline"&gt;Class Timeline&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="troubleshooting"&gt;Troubleshooting&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/nav&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- Tab Content --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;main id="main-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;!-- Overview Section --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;section id="overview" class="tab-content active space-y-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-semibold mb-4 text-indigo-700"&gt;Learning Objectives&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-4 text-gray-700"&gt;This application is your interactive guide for running the workshop. The primary goal is to provide a usable, in-class tool to manage roles, setup, and the class flow. By the end of this lesson, students will be able to:&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;ul class="list-disc list-inside space-y-2 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;li&gt;**Configure mixed signal flows:** Understand how to ingest video via Capture Card (HDMI), Network (RTSP), and WebRTC (VDO.Ninja).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;li&gt;**Manage Roles:** Execute a broadcast with a full crew (Director, TD, Floor, Audio).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;li&gt;**Synchronize Signals:** Identify and fix audio/video latency issues between different inputs.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;li&gt;**Communicate:** Use industry-standard "Ready/Take" terminology.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-semibold mb-4 text-indigo-700"&gt;Sample "Run of Show" (5 Minutes)&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-4 text-gray-700"&gt;Distribute this simple script to the Script Supervisor, Director, and Talent to guide the 5-minute live broadcast segment.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="divide-y divide-gray-200"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="py-3 grid grid-cols-3 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="font-medium text-gray-500"&gt;00:00 - 00:30&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="col-span-2 text-gray-800"&gt;**Intro / Wide Shot:** Host A and Host B welcome viewers. Graphics: Show Title.&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="py-3 grid grid-cols-3 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="font-medium text-gray-500"&gt;00:30 - 02:00&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="col-span-2 text-gray-800"&gt;**Host Chat / Close-Ups:** Hosts discuss a topic. Director cuts between Host A and Host B close-ups.&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="py-3 grid grid-cols-3 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="font-medium text-gray-500"&gt;02:00 - 04:00&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="col-span-2 text-gray-800"&gt;**Remote Segment / Split Screen:** Toss to Field Reporter C. Show Reporter C full screen, then in a split-screen with hosts. Graphics: Lower third for Reporter C.&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="py-3 grid grid-cols-3 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="font-medium text-gray-500"&gt;04:00 - 04:30&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="col-span-2 text-gray-800"&gt;**Recap / Wide Shot:** Hosts thank reporter. Back to wide shot of hosts.&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="py-3 grid grid-cols-3 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="font-medium text-gray-500"&gt;04:30 - 05:00&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="col-span-2 text-gray-800"&gt;**Outro / Credits:** Hosts sign off. Graphics: Roll simple credits. Fade to black.&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/section&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;!-- Role Assignments Section --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;section id="roles" class="tab-content space-y-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-semibold text-indigo-700"&gt;Role Assignments (22 Students)&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button id="export-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"&gt;&lt;path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/&gt;&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span&gt;Download Assignments (CSV)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-4 text-gray-700"&gt;Enter student names below. Click "Download" to save an Excel-ready CSV file.&lt;/p&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex space-x-2 mb-6" id="role-filters"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100 active" data-filter="all"&gt;All Roles (22)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100" data-filter="control"&gt;Control Room (6)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100" data-filter="floor"&gt;Studio Floor (16)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="role-list"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;!-- Control Room Roles --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;1. Director&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Calls the shots ("Ready Camera 1, Take Camera 1"). The boss.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="1. Director" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;2. Technical Director (TD)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Operates OBS. Switches scenes *only* on the Director's commands.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="2. Technical Director" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;3. Audio Engineer&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Mixes levels in OBS. Manages Master output and mic levels.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="3. Audio Engineer" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;4. Stream Tech (VDO.Ninja)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Generates/sends VDO.Ninja links and monitors connections.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="4. Stream Tech" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;5. Graphics Operator&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Manages lower thirds, title cards, and overlays in OBS.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="5. Graphics Operator" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-indigo-800"&gt;6. Script Supervisor/Timer&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-indigo-700 mb-2"&gt;Counts down segments and ensures Talent stays on topic.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="6. Script Supervisor" data-team="Control Room"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;!-- Studio Floor Roles --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;7. Floor Director&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Link between Control Room and Studio. Uses hand signals.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="7. Floor Director" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;8. Talent A (Host)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Main anchor.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="8. Talent A" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;9. Talent B (Co-Host)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Secondary anchor.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="9. Talent B" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;10. Talent C (Field Reporter)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Remote roaming reporter (using an iPhone).&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="10. Talent C" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;11. Camera 1 Op (Sony a7iii)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Main wide/master shot.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="11. Camera 1 Op" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;12. Camera 1 Assistant&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Focus puller/Cable wrangler.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="12. Camera 1 Asst" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;13. Camera 2 Op (Panasonic)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Zoom/Telephoto shot.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="13. Camera 2 Op" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;14. Camera 2 Assistant&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Helps with PTZ or tripod movements.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="14. Camera 2 Asst" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;15. Camera 3 Op (iPhone 1)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Handheld "roaming" camera (VDO.Ninja).&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="15. Camera 3 Op" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;16. Camera 3 Grip&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Ensures Op doesn't trip; holds portable light.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="16. Camera 3 Grip" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;17. Camera 4 Op (iPhone 2)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Dedicated "Field Reporter" camera (VDO.Ninja).&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="17. Camera 4 Op" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;18. Lighting Director&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Sets up key/fill lights.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="18. Lighting Director" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;19. Audio Assistant 1&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Mics up Talent A/B with DJI transmitters. Checks batteries.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="19. Audio Asst 1" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;20. Audio Assistant 2&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Mics up Field Reporter.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="20. Audio Asst 2" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;21. Set Dresser/Props&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Ensures background looks professional.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="21. Set Dresser" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="font-semibold text-lg text-gray-800"&gt;22. Runner/Utility&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p class="text-sm text-gray-600 mb-2"&gt;Floater who helps wherever needed (tech issues, etc.).&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="22. Runner" data-team="Studio Floor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/section&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;!-- Setup Guide Section --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;section id="setup" class="tab-content space-y-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-semibold mb-4 text-indigo-700"&gt;Hardware Setup Guide&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-6 text-gray-700"&gt;This section details how to connect each camera source to the OBS computer. Select a camera source to see its specific setup instructions.&lt;/p&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex flex-wrap space-x-2 rounded-lg bg-gray-100 p-1 mb-6 max-w-md" id="setup-tabs-container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200 active" data-target="setup-sony"&gt;A. Sony a7iii (HDMI)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" data-target="setup-panasonic"&gt;B. Panasonic (RTSP)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" data-target="setup-iphones"&gt;C. iPhones (Web)&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div id="setup-content-container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div id="setup-sony" class="tab-content active"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-xl font-semibold mb-3 text-gray-800"&gt;Sony a7iii (The "Fast" Cam)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Connection:** Camera HDMI Out </span><span class="s2">→</span><span class="s1"> Video Capture Card </span><span class="s2">→</span><span class="s1"> USB into PC.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**OBS Source:** Add a `Video Capture Device` source. Select your capture card from the dropdown.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Audio:** DJI RX receiver plugged into Camera Mic port. Audio will travel via the HDMI cable.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Camera Settings:** Ensure camera is in Movie mode and HDMI output is set to "Clean" (no on-screen info).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div id="setup-panasonic" class="tab-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-xl font-semibold mb-3 text-gray-800"&gt;Panasonic XH1600 (The "Network" Cam)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                             </span>&lt;ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Connection:** Connect camera via Ethernet cable to the same network router/switch as the OBS PC.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Camera Settings:** Enable RTSP streaming in the camera's network menu and note its IP address.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**OBS Source:** Add a `Media Source`. Uncheck 'Local File'.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Input:** Enter the camera's RTSP URL (e.g., `rtsp://192.168.1.xxx:554/stream`).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Note:** This camera will likely have the most delay (latency). Be prepared to fix this in Phase 2.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div id="setup-iphones" class="tab-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h3 class="text-xl font-semibold mb-3 text-gray-800"&gt;iPhones (The "Cloud" Cams)&lt;/h3&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                             </span>&lt;ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**Connection:** Connect phones to a reliable, high-speed WiFi network (5GHz preferred) or use 5G/LTE.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;li&gt;**VDO.Ninja Workflow (Stream Tech):**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;ol class="list-alpha list-outside pl-5 mt-2 space-y-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;Go to `vdo.ninja` on the OBS PC and click "Create Room".&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;Send the invite link (or show the QR code) to the iPhone operators.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;iPhone operators join the room as a "Camera".&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;li&gt;Copy the "View link" for each specific camera from the VDO.Ninja director's panel.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/ol&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                 </span>&lt;li&gt;**OBS Source:** For each iPhone, add a `Browser Source`. Paste the unique VDO.Ninja "View link" into the URL field. Set width/height (e.g., 1920x1080).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/section&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;!-- Class Timeline Section --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;section id="timeline" class="tab-content space-y-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-semibold mb-4 text-indigo-700"&gt;Class Timeline (75 Minutes)&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-6 text-gray-700"&gt;Follow this timeline to run the class. Click on each phase to expand its details and objectives.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-4" id="timeline-accordion"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition active"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="text-lg font-semibold text-indigo-800"&gt;Phase 1: Briefing &amp; Assignments (10 Mins)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="icon text-indigo-600"&gt;</span><span class="s2">▼</span><span class="s1">&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;ul class="list-disc list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Explain the objective: A 5-minute "Morning Show" segment.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Assign roles (use the 'Role Assignments' tab).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Hand out the "Run of Show" (a simple script: Intro </span><span class="s2">→</span><span class="s1"> Host Chat </span><span class="s2">→</span><span class="s1"> Roaming segment </span><span class="s2">→</span><span class="s1"> Outro).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="text-lg font-semibold text-gray-800"&gt;Phase 2: Technical Build (25 Mins)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="icon text-gray-600"&gt;</span><span class="s2">▼</span><span class="s1">&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;ul class="list-disc list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**Cameras:** Operators set white balance, exposure, and focus.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**Audio:** Assistants clip DJI mics to talent. Confirm receivers are paired and transmitting to cameras.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**OBS Construction (Control Room Team):**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;ul class="list-circle list-outside pl-5 mt-2 space-y-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Create 4 Scenes: `Wide Shot`, `Close Up`, `Remote Feed`, `Split Screen`.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Add all camera and audio sources as per the Setup Guide.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li class="font-semibold text-red-600 mt-2"&gt;**CRITICAL TEACHING MOMENT: The Latency Challenge**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;ul class="list-circle list-outside pl-5 mt-2 space-y-1 font-normal"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Have all cameras point at a student clapping their hands.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Observe the OBS Multiview. The Panasonic (RTSP) and iPhones (Web) will likely be behind the Sony (HDMI).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;**Fix:** Add a **Video Delay (Async)** filter to the Sony source. Adjust the milliseconds until it matches the clap on the slowest camera. Repeat for other "fast" sources if needed.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="text-lg font-semibold text-gray-800"&gt;Phase 3: Dry Run / Rehearsal (15 Mins)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="icon text-gray-600"&gt;</span><span class="s2">▼</span><span class="s1">&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;ul class="list-disc list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Director practices calling shots.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**Rule:** The TD does not switch until the Director says "Take."&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Floor Manager practices counting down the Talent silently using fingers.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Test the VDO.Ninja connection by having the "Roaming Cam" walk down the hall and back.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Run the full 5-minute show script once, stop-and-start as needed to fix issues.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="text-lg font-semibold text-gray-800"&gt;Phase 4: The Live Broadcast (15 Mins)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="icon text-gray-600"&gt;</span><span class="s2">▼</span><span class="s1">&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;ul class="list-disc list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**Record:** Hit "Start Recording" (or "Start Streaming" if going live).&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Execute the 5-minute show from start to finish *without stopping*.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Simulate a "breaking news" interruption (e.g., have the Runner walk on set) to test the team's adaptability.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;After the 5-min show, Director calls "Cut" and TD stops the recording.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="text-lg font-semibold text-gray-800"&gt;Phase 5: Debrief &amp; Playback (10 Mins)&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span class="icon text-gray-600"&gt;</span><span class="s2">▼</span><span class="s1">&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;ul class="list-disc list-outside space-y-2 pl-5 text-gray-700"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Watch the final recording playback on the projector.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;**Group Critique (Ask the class):**</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;ul class="list-circle list-outside pl-5 mt-2 space-y-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Was the audio synced and levels consistent?&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Did the Director and TD communicate clearly and effectively?&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;Was the lighting adequate? Were all talent visible?&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                            </span>&lt;li&gt;What was the biggest challenge? What went well?&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;li&gt;Clean up and cable wrap.&lt;/li&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/ul&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/section&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;!-- Troubleshooting Section --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;section id="troubleshooting" class="tab-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white p-6 rounded-lg shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-semibold mb-4 text-indigo-700"&gt;Troubleshooting Cheat Sheet&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-4 text-gray-700"&gt;Use this guide for quick fixes during the build or rehearsal. Use the search box to filter by issue.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="troubleshooting-search" placeholder="Search for an issue..." class="w-full p-2 border border-gray-300 rounded-lg mb-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-x-auto rounded-lg border border-gray-200"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;table class="min-w-full divide-y divide-gray-200" id="troubleshooting-table"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;thead class="bg-gray-50"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"&gt;Issue&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"&gt;Likely Cause&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"&gt;Solution&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;tbody class="bg-white divide-y divide-gray-200"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;Panasonic video is choppy&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Network congestion or high bitrate&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Lower the bitrate in the Panasonic camera settings or check Ethernet cable. Ensure PC and camera are on the same gigabit switch.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;iPhone video freezes&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Poor WiFi signal&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Move iPhone closer to Access Point. Use a 5GHz network, not 2.4GHz. If possible, switch to 4G/5G data.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;Audio echo/feedback&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;OBS Audio Monitoring&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;In OBS Audio Mixer, ensure all sources are set to "Monitor Off". Audio Engineer should use headphones connected to the "Monitor" device. Mute desktop audio.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;Lip Sync is off&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Different processing times&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Right-click Audio Source in OBS </span><span class="s2">→</span><span class="s1"> Advanced Audio Properties </span><span class="s2">→</span><span class="s1"> Adjust "Sync Offset" (ms). Add positive delay (e.g., 120ms) to the audio if it's *ahead* of the video.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;Director can't be heard&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;No intercom system&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Use a free group Discord call on phones (with headphones) for a simple "comms" system. Or, Floor Director must be close to Control Room.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                 </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-nowrap font-medium text-red-600"&gt;Sony camera turns off&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;Auto Power Off / Overheating&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;td class="px-6 py-4 whitespace-normal text-sm text-gray-700"&gt;In camera menu, set "Auto Power OFF Temp." to "High" and "Power OFF Time" to "Do Not Turn Off". Use a dummy battery if possible.&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/section&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/main&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const mainTabs = document.querySelectorAll('#main-tabs .tab-btn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const mainContents = document.querySelectorAll('#main-content .tab-content');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mainTabs.forEach(tab =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>tab.addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>mainTabs.forEach(t =&gt; t.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>mainContents.forEach(c =&gt; c.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>tab.classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById(tab.dataset.target).classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const roleFilters = document.querySelectorAll('#role-filters .role-filter-btn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const roleCards = document.querySelectorAll('#role-list .role-card');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>roleFilters.forEach(filter =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>filter.addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>roleFilters.forEach(f =&gt; f.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>filter.classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const filterValue = filter.dataset.filter;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>roleCards.forEach(card =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>if (filterValue === 'all' || card.dataset.team === filterValue) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>card.style.display = 'block';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>card.style.display = 'none';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const setupTabs = document.querySelectorAll('#setup-tabs-container .setup-tab-btn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const setupContents = document.querySelectorAll('#setup-content-container .tab-content');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setupTabs.forEach(tab =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>tab.addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>setupTabs.forEach(t =&gt; t.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>setupContents.forEach(c =&gt; c.classList.remove('active'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>tab.classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById(tab.dataset.target).classList.add('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const accordionHeaders = document.querySelectorAll('#timeline-accordion .accordion-header');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>accordionHeaders.forEach(header =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>header.addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>header.classList.toggle('active');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const searchInput = document.getElementById('troubleshooting-search');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const tableRows = document.querySelectorAll('#troubleshooting-table tbody tr');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>searchInput.addEventListener('keyup', (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const searchTerm = e.target.value.toLowerCase();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>tableRows.forEach(row =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const issueText = row.cells[0].textContent.toLowerCase();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>if (issueText.includes(searchTerm)) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>row.style.display = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>row.style.display = 'none';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Logic for Role Assignment Inputs &amp; CSV Export</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const roleInputs = document.querySelectorAll('.role-input');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const exportBtn = document.getElementById('export-btn');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Load saved names from localStorage on page load</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>roleInputs.forEach(input =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const roleKey = 'role_' + input.dataset.role.replace(/\s+/g, '_');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const savedName = localStorage.getItem(roleKey);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (savedName) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>input.value = savedName;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// Save to localStorage on every keystroke</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>input.addEventListener('input', (e) =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>localStorage.setItem(roleKey, e.target.value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Export to CSV</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>exportBtn.addEventListener('click', () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let csvContent = "data:text/csv;charset=utf-8,Role,Team,Student Name\n";</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>roleInputs.forEach(input =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const roleName = input.dataset.role;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const team = input.dataset.team;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const studentName = input.value.trim() || "Unassigned"; // Default if empty</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>// Escape quotes for CSV safety</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const safeName = studentName.replace(/"/g, '""');<span class="Apple-converted-space"> </span></span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>csvContent += `"${roleName}","${team}","${safeName}"\n`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const encodedUri = encodeURI(csvContent);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const link = document.createElement("a");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.setAttribute("href", encodedUri);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.setAttribute("download", "workshop_assignments.csv");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.body.appendChild(link);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>link.click();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.body.removeChild(link);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
