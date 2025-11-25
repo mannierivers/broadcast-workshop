@@ -4,23 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-Camera Live Production Workshop</title>
+    
+    <!-- Fonts: Martian Mono & Outfit (Carbona Alternative) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chosen Palette: Calm Neutrals (Tailwind Grays, Indigo accent) -->
-    <!-- Application Structure Plan: A tabbed, task-oriented SPA. The linear lesson plan is non-ideal for live class management. This structure uses main tabs (Overview, Roles, Setup, Timeline, Troubleshooting) to allow the instructor to non-linearly access the exact information needed *when* it's needed. For example, the 'Roles' tab organizes all 22 student roles with filters, and the 'Timeline' tab acts as an interactive accordion, allowing the instructor to expand/collapse each phase of the 90-min class as it happens. This design prioritizes in-the-moment usability over the report's original linear flow. -->
-    <!-- Visualization & Content Choices: Report Info: Role Assignments (22 students) -> Goal: Organize/Inform -> Viz: Interactive "card" layout -> Interaction: JS-powered buttons to filter by 'Control Room' or 'Studio Floor' -> Justification: Eases the cognitive load of assigning 22 roles by grouping them. | Report Info: Class Timeline (5 Phases) -> Goal: Organize (Process) -> Viz: HTML/CSS Accordion -> Interaction: JS click to expand/collapse each phase's details -> Justification: Allows instructor to focus only on the current class phase. | Report Info: Troubleshooting Table -> Goal: Inform/Organize -> Viz: HTML Table -> Interaction: JS search bar to filter 'Issue' column -> Justification: Provides rapid, high-pressure problem solving. | Report Info: Setup Guide -> Goal: Organize (Process) -> Viz: Inner tabs for each camera -> Interaction: JS click to show/hide setup steps -> Justification: Breaks down complex parallel setup into simple, focused steps. This report contains no data suitable for Chart.js/Plotly. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Martian Mono', 'monospace'],
+                    },
+                    colors: {
+                        maroon: '#680017',
+                        gold: '#CFA54D',
+                        dark: '#121212',
+                        card: '#1E1E1E',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* Salpointe Colors: Maroon (#680017) and Gold (#CFA54D) */
+        :root {
+            --lancers-maroon: #680017;
+            --lancers-gold: #CFA54D;
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #f3f4f6;
+        }
+
+        /* Apply Martian Mono to Inputs for Tech Feel */
+        input, select, textarea, .font-mono-tech {
+            font-family: 'Martian Mono', monospace;
+        }
+
         .tab-content {
             display: none;
         }
         .tab-content.active {
             display: block;
         }
-        .tab-btn.active {
-            border-bottom-color: #4f46e5;
-            color: #4f46e5;
-            font-weight: 600;
+
+        /* Main Tabs - Gold for active */
+        .tab-btn {
+            color: #9ca3af; /* gray-400 */
+            font-family: 'Outfit', sans-serif;
         }
+        .tab-btn:hover {
+            color: var(--lancers-gold);
+            border-bottom-color: #4b5563;
+        }
+        .tab-btn.active {
+            border-bottom-color: var(--lancers-gold);
+            color: var(--lancers-gold);
+            font-weight: 700;
+        }
+
+        /* Accordion */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
@@ -37,48 +88,57 @@
         .accordion-header.active .icon {
             transform: rotate(180deg);
         }
+
+        /* Buttons & Pills - Maroon Background, Gold Text */
         .setup-tab-btn.active {
-            background-color: #4f46e5;
-            color: white;
+            background-color: var(--lancers-maroon);
+            color: var(--lancers-gold);
+            border: 1px solid var(--lancers-gold);
         }
         .role-filter-btn.active {
-            background-color: #4f46e5;
-            color: white;
+            background-color: var(--lancers-maroon);
+            color: var(--lancers-gold);
+            border-color: var(--lancers-gold);
+        }
+
+        /* Input overrides for dark mode */
+        input::placeholder, textarea::placeholder {
+            color: #6b7280;
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased text-gray-900">
+<body class="font-sans antialiased">
 
     <div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
 
         <!-- Header -->
-        <header class="mb-6">
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Multi-Camera Live Production Workshop</h1>
-            <div class="mt-3 flex flex-wrap gap-x-6 gap-y-2">
-                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700">75 Min Duration</span>
-                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700">22 Students</span>
-                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700">4 Camera Setup</span>
-                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-medium text-indigo-700">OBS & VDO.Ninja</span>
+        <header class="mb-6 border-b border-gray-800 pb-6">
+            <h1 class="text-3xl font-bold tracking-tight text-[#CFA54D] sm:text-4xl font-mono">Multi-Camera Live Production Workshop</h1>
+            <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                <span class="inline-flex items-center rounded-full bg-[#680017] border border-[#CFA54D] px-3 py-1 text-sm font-medium text-white font-mono">75 Min Duration</span>
+                <span class="inline-flex items-center rounded-full bg-[#680017] border border-[#CFA54D] px-3 py-1 text-sm font-medium text-white font-mono">22 Students</span>
+                <span class="inline-flex items-center rounded-full bg-[#680017] border border-[#CFA54D] px-3 py-1 text-sm font-medium text-white font-mono">4 Camera Setup</span>
+                <span class="inline-flex items-center rounded-full bg-[#680017] border border-[#CFA54D] px-3 py-1 text-sm font-medium text-white font-mono">OBS & VDO.Ninja</span>
             </div>
         </header>
 
         <!-- Main Navigation Tabs -->
-        <nav class="mb-6 border-b border-gray-200">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500" id="main-tabs">
+        <nav class="mb-6 border-b border-gray-800">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="main-tabs">
                 <li class="mr-2">
-                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 active" data-target="overview">Overview</button>
+                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg active" data-target="overview">Overview</button>
                 </li>
                 <li class="mr-2">
-                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="roles">Role Assignments</button>
+                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg" data-target="roles">Role Assignments</button>
                 </li>
                 <li class="mr-2">
-                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="setup">Setup Guide</button>
+                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg" data-target="setup">Setup Guide</button>
                 </li>
                 <li class="mr-2">
-                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="timeline">Class Timeline</button>
+                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg" data-target="timeline">Class Timeline</button>
                 </li>
                 <li>
-                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-target="troubleshooting">Troubleshooting</button>
+                    <button class="tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg" data-target="troubleshooting">Troubleshooting</button>
                 </li>
             </ul>
         </nav>
@@ -87,39 +147,40 @@
         <main id="main-content">
             <!-- Overview Section -->
             <section id="overview" class="tab-content active space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Learning Objectives</h2>
-                    <p class="mb-4 text-gray-700">This application is your interactive guide for running the workshop. The primary goal is to provide a usable, in-class tool to manage roles, setup, and the class flow. By the end of this lesson, students will be able to:</p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li>**Configure mixed signal flows:** Understand how to ingest video via Capture Card (HDMI), Network (RTSP), and WebRTC (VDO.Ninja).</li>
-                        <li>**Manage Roles:** Execute a broadcast with a full crew (Director, TD, Floor, Audio).</li>
-                        <li>**Synchronize Signals:** Identify and fix audio/video latency issues between different inputs.</li>
-                        <li>**Communicate:** Use industry-standard "Ready/Take" terminology.</li>
+                <!-- ... (Content same as previous, omitted for brevity) ... -->
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-[#CFA54D]">Learning Objectives</h2>
+                    <p class="mb-4 text-gray-300">This application is your interactive guide for running the workshop. The primary goal is to provide a usable, in-class tool to manage roles, setup, and the class flow. By the end of this lesson, students will be able to:</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-300">
+                        <li><strong class="text-white">Configure mixed signal flows:</strong> Understand how to ingest video via Capture Card (HDMI), Network (RTSP), and WebRTC (VDO.Ninja).</li>
+                        <li><strong class="text-white">Manage Roles:</strong> Execute a broadcast with a full crew (Director, TD, Floor, Audio).</li>
+                        <li><strong class="text-white">Synchronize Signals:</strong> Identify and fix audio/video latency issues between different inputs.</li>
+                        <li><strong class="text-white">Communicate:</strong> Use industry-standard "Ready/Take" terminology.</li>
                     </ul>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Sample "Run of Show" (5 Minutes)</h2>
-                    <p class="mb-4 text-gray-700">Distribute this simple script to the Script Supervisor, Director, and Talent to guide the 5-minute live broadcast segment.</p>
-                    <div class="divide-y divide-gray-200">
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-[#CFA54D]">Sample "Run of Show" (5 Minutes)</h2>
+                    <p class="mb-4 text-gray-300">Distribute this simple script to the Script Supervisor, Director, and Talent to guide the 5-minute live broadcast segment.</p>
+                    <div class="divide-y divide-gray-700">
                         <div class="py-3 grid grid-cols-3 gap-4">
-                            <span class="font-medium text-gray-500">00:00 - 00:30</span>
-                            <span class="col-span-2 text-gray-800">**Intro / Wide Shot:** Host A and Host B welcome viewers. Graphics: Show Title.</span>
+                            <span class="font-medium text-[#CFA54D] font-mono">00:00 - 00:30</span>
+                            <span class="col-span-2 text-gray-300"><strong class="text-white">Intro / Wide Shot:</strong> Host A and Host B welcome viewers. Graphics: Show Title.</span>
                         </div>
                         <div class="py-3 grid grid-cols-3 gap-4">
-                            <span class="font-medium text-gray-500">00:30 - 02:00</span>
-                            <span class="col-span-2 text-gray-800">**Host Chat / Close-Ups:** Hosts discuss a topic. Director cuts between Host A and Host B close-ups.</span>
+                            <span class="font-medium text-[#CFA54D] font-mono">00:30 - 02:00</span>
+                            <span class="col-span-2 text-gray-300"><strong class="text-white">Host Chat / Close-Ups:</strong> Hosts discuss a topic. Director cuts between Host A and Host B close-ups.</span>
                         </div>
                         <div class="py-3 grid grid-cols-3 gap-4">
-                            <span class="font-medium text-gray-500">02:00 - 04:00</span>
-                            <span class="col-span-2 text-gray-800">**Remote Segment / Split Screen:** Toss to Field Reporter C. Show Reporter C full screen, then in a split-screen with hosts. Graphics: Lower third for Reporter C.</span>
+                            <span class="font-medium text-[#CFA54D] font-mono">02:00 - 04:00</span>
+                            <span class="col-span-2 text-gray-300"><strong class="text-white">Remote Segment / Split Screen:</strong> Toss to Field Reporter C. Show Reporter C full screen, then in a split-screen with hosts. Graphics: Lower third for Reporter C.</span>
                         </div>
                         <div class="py-3 grid grid-cols-3 gap-4">
-                            <span class="font-medium text-gray-500">04:00 - 04:30</span>
-                            <span class="col-span-2 text-gray-800">**Recap / Wide Shot:** Hosts thank reporter. Back to wide shot of hosts.</span>
+                            <span class="font-medium text-[#CFA54D] font-mono">04:00 - 04:30</span>
+                            <span class="col-span-2 text-gray-300"><strong class="text-white">Recap / Wide Shot:</strong> Hosts thank reporter. Back to wide shot of hosts.</span>
                         </div>
                         <div class="py-3 grid grid-cols-3 gap-4">
-                            <span class="font-medium text-gray-500">04:30 - 05:00</span>
-                            <span class="col-span-2 text-gray-800">**Outro / Credits:** Hosts sign off. Graphics: Roll simple credits. Fade to black.</span>
+                            <span class="font-medium text-[#CFA54D] font-mono">04:30 - 05:00</span>
+                            <span class="col-span-2 text-gray-300"><strong class="text-white">Outro / Credits:</strong> Hosts sign off. Graphics: Roll simple credits. Fade to black.</span>
                         </div>
                     </div>
                 </div>
@@ -127,177 +188,105 @@
 
             <!-- Role Assignments Section -->
             <section id="roles" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                        <h2 class="text-2xl font-semibold text-indigo-700">Role Assignments (22 Students)</h2>
-                        <button id="export-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
-                            <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
-                            <span>Download Assignments (CSV)</span>
-                        </button>
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-semibold text-[#CFA54D]">Role Assignments</h2>
+                        <div class="flex gap-2">
+                             <button id="reset-roles-btn" class="bg-gray-700 hover:bg-gray-600 border border-gray-500 text-white font-bold py-2 px-4 rounded inline-flex items-center transition shadow-lg text-sm font-mono">
+                                <span>Reset to Defaults</span>
+                            </button>
+                            <button id="export-btn" class="bg-[#680017] hover:bg-red-900 border border-[#CFA54D] text-[#CFA54D] font-bold py-2 px-4 rounded inline-flex items-center transition shadow-lg text-sm font-mono">
+                                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+                                <span>Download CSV</span>
+                            </button>
+                        </div>
                     </div>
-                    <p class="mb-4 text-gray-700">Enter student names below. Click "Download" to save an Excel-ready CSV file.</p>
+                    
+                    <!-- Add Role Form -->
+                    <div class="bg-[#262626] border border-gray-700 p-4 rounded-lg mb-6">
+                        <h3 class="text-lg font-medium text-white mb-3">Add Custom Role</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <div class="col-span-1">
+                                <label class="block text-xs text-gray-400 mb-1 font-mono">Role Title</label>
+                                <input type="text" id="new-role-title" class="w-full p-2 bg-[#121212] border border-gray-600 rounded text-sm text-white focus:ring-[#CFA54D] focus:border-[#CFA54D]" placeholder="e.g. Teleprompter">
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block text-xs text-gray-400 mb-1 font-mono">Description</label>
+                                <input type="text" id="new-role-desc" class="w-full p-2 bg-[#121212] border border-gray-600 rounded text-sm text-white focus:ring-[#CFA54D] focus:border-[#CFA54D]" placeholder="Short description...">
+                            </div>
+                             <div class="col-span-1">
+                                <label class="block text-xs text-gray-400 mb-1 font-mono">Team</label>
+                                <select id="new-role-team" class="w-full p-2 bg-[#121212] border border-gray-600 rounded text-sm text-white focus:ring-[#CFA54D] focus:border-[#CFA54D]">
+                                    <option value="control">Control Room</option>
+                                    <option value="floor">Studio Floor</option>
+                                </select>
+                            </div>
+                            <div class="col-span-1">
+                                <button id="add-role-btn" class="w-full bg-[#CFA54D] hover:bg-yellow-600 text-[#680017] font-bold py-2 px-4 rounded transition font-mono">Add Role</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="mb-4 text-gray-300">Enter student names below. Use the "Add" section above for extra students.</p>
                     
                     <div class="flex space-x-2 mb-6" id="role-filters">
-                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100 active" data-filter="all">All Roles (22)</button>
-                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100" data-filter="control">Control Room (6)</button>
-                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100" data-filter="floor">Studio Floor (16)</button>
+                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-700 text-gray-300 hover:bg-gray-800 active" data-filter="all">All Roles</button>
+                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-700 text-gray-300 hover:bg-gray-800" data-filter="control">Control Room</button>
+                        <button class="role-filter-btn px-4 py-2 rounded-md text-sm font-medium border border-gray-700 text-gray-300 hover:bg-gray-800" data-filter="floor">Studio Floor</button>
                     </div>
                     
+                    <!-- Dynamic Role List Container -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="role-list">
-                        <!-- Control Room Roles -->
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">1. Director</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Calls the shots ("Ready Camera 1, Take Camera 1"). The boss.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="1. Director" data-team="Control Room">
-                        </div>
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">2. Technical Director (TD)</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Operates OBS. Switches scenes *only* on the Director's commands.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="2. Technical Director" data-team="Control Room">
-                        </div>
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">3. Audio Engineer</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Mixes levels in OBS. Manages Master output and mic levels.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="3. Audio Engineer" data-team="Control Room">
-                        </div>
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">4. Stream Tech (VDO.Ninja)</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Generates/sends VDO.Ninja links and monitors connections.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="4. Stream Tech" data-team="Control Room">
-                        </div>
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">5. Graphics Operator</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Manages lower thirds, title cards, and overlays in OBS.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="5. Graphics Operator" data-team="Control Room">
-                        </div>
-                        <div class="role-card border border-indigo-200 bg-indigo-50 rounded-lg p-4" data-team="control">
-                            <h3 class="font-semibold text-lg text-indigo-800">6. Script Supervisor/Timer</h3>
-                            <p class="text-sm text-indigo-700 mb-2">Counts down segments and ensures Talent stays on topic.</p>
-                            <input type="text" class="role-input w-full p-2 border border-indigo-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="6. Script Supervisor" data-team="Control Room">
-                        </div>
-
-                        <!-- Studio Floor Roles -->
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">7. Floor Director</h3>
-                            <p class="text-sm text-gray-600 mb-2">Link between Control Room and Studio. Uses hand signals.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="7. Floor Director" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">8. Talent A (Host)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Main anchor.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="8. Talent A" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">9. Talent B (Co-Host)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Secondary anchor.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="9. Talent B" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">10. Talent C (Field Reporter)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Remote roaming reporter (using an iPhone).</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="10. Talent C" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">11. Camera 1 Op (Sony a7iii)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Main wide/master shot.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="11. Camera 1 Op" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">12. Camera 1 Assistant</h3>
-                            <p class="text-sm text-gray-600 mb-2">Focus puller/Cable wrangler.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="12. Camera 1 Asst" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">13. Camera 2 Op (Panasonic)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Zoom/Telephoto shot.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="13. Camera 2 Op" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">14. Camera 2 Assistant</h3>
-                            <p class="text-sm text-gray-600 mb-2">Helps with PTZ or tripod movements.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="14. Camera 2 Asst" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">15. Camera 3 Op (iPhone 1)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Handheld "roaming" camera (VDO.Ninja).</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="15. Camera 3 Op" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">16. Camera 3 Grip</h3>
-                            <p class="text-sm text-gray-600 mb-2">Ensures Op doesn't trip; holds portable light.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="16. Camera 3 Grip" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">17. Camera 4 Op (iPhone 2)</h3>
-                            <p class="text-sm text-gray-600 mb-2">Dedicated "Field Reporter" camera (VDO.Ninja).</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="17. Camera 4 Op" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">18. Lighting Director</h3>
-                            <p class="text-sm text-gray-600 mb-2">Sets up key/fill lights.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="18. Lighting Director" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">19. Audio Assistant 1</h3>
-                            <p class="text-sm text-gray-600 mb-2">Mics up Talent A/B with DJI transmitters. Checks batteries.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="19. Audio Asst 1" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">20. Audio Assistant 2</h3>
-                            <p class="text-sm text-gray-600 mb-2">Mics up Field Reporter.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="20. Audio Asst 2" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">21. Set Dresser/Props</h3>
-                            <p class="text-sm text-gray-600 mb-2">Ensures background looks professional.</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="21. Set Dresser" data-team="Studio Floor">
-                        </div>
-                        <div class="role-card border border-gray-200 bg-white rounded-lg p-4" data-team="floor">
-                            <h3 class="font-semibold text-lg text-gray-800">22. Runner/Utility</h3>
-                            <p class="text-sm text-gray-600 mb-2">Floater who helps wherever needed (tech issues, etc.).</p>
-                            <input type="text" class="role-input w-full p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Student Name" data-role="22. Runner" data-team="Studio Floor">
-                        </div>
+                        <!-- JS will populate this -->
                     </div>
                 </div>
             </section>
 
             <!-- Setup Guide Section -->
             <section id="setup" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Hardware Setup Guide</h2>
-                    <p class="mb-6 text-gray-700">This section details how to connect each camera source to the OBS computer. Select a camera source to see its specific setup instructions.</p>
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-[#CFA54D]">Hardware Setup Guide</h2>
+                    <p class="mb-6 text-gray-300">This section details how to connect each camera source to the OBS computer. Select a camera source to see its specific setup instructions.</p>
                     
-                    <div class="flex flex-wrap space-x-2 rounded-lg bg-gray-100 p-1 mb-6 max-w-md" id="setup-tabs-container">
-                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200 active" data-target="setup-sony">A. Sony a7iii (HDMI)</button>
-                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" data-target="setup-panasonic">B. Panasonic (RTSP)</button>
-                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" data-target="setup-iphones">C. iPhones (Web)</button>
+                    <div class="flex flex-wrap space-x-2 gap-y-2 rounded-lg bg-[#121212] border border-gray-700 p-1 mb-6 max-w-3xl" id="setup-tabs-container">
+                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 active" data-target="setup-sony">A. Sony a7iii</button>
+                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800" data-target="setup-panasonic">B. Panasonic</button>
+                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800" data-target="setup-iphones">C. iPhones</button>
+                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800" data-target="setup-dji">D. DJI Mic</button>
+                        <button class="setup-tab-btn flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800" data-target="setup-gimbal">E. DJI Gimbal</button>
                     </div>
 
                     <div id="setup-content-container">
                         <div id="setup-sony" class="tab-content active">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-800">Sony a7iii (The "Fast" Cam)</h3>
-                            <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700">
-                                <li>**Connection:** Camera HDMI Out → Video Capture Card → USB into PC.</li>
-                                <li>**OBS Source:** Add a `Video Capture Device` source. Select your capture card from the dropdown.</li>
-                                <li>**Audio:** DJI RX receiver plugged into Camera Mic port. Audio will travel via the HDMI cable.</li>
-                                <li>**Camera Settings:** Ensure camera is in Movie mode and HDMI output is set to "Clean" (no on-screen info).</li>
+                            <h3 class="text-xl font-semibold mb-3 text-white">Sony a7iii (The "Fast" Cam)</h3>
+                            <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-300">
+                                <li><strong class="text-white">Connection:</strong> Camera HDMI Out → Video Capture Card → USB into PC.</li>
+                                <li><strong class="text-white">OBS Source:</strong> Add a `Video Capture Device` source. Select your capture card from the dropdown.</li>
+                                <li><strong class="text-white">Audio:</strong> DJI RX receiver plugged into Camera Mic port. Audio will travel via the HDMI cable.</li>
+                                <li><strong class="text-white">Camera Settings:</strong> Ensure camera is in Movie mode and HDMI output is set to "Clean" (no on-screen info).</li>
                             </ul>
                         </div>
                         <div id="setup-panasonic" class="tab-content">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-800">Panasonic XH1600 (The "Network" Cam)</h3>
-                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700">
-                                <li>**Connection:** Connect camera via Ethernet cable to the same network router/switch as the OBS PC.</li>
-                                <li>**Camera Settings:** Enable RTSP streaming in the camera's network menu and note its IP address.</li>
-                                <li>**OBS Source:** Add a `Media Source`. Uncheck 'Local File'.</li>
-                                <li>**Input:** Enter the camera's RTSP URL (e.g., `rtsp://192.168.1.xxx:554/stream`).</li>
-                                <li>**Note:** This camera will likely have the most delay (latency). Be prepared to fix this in Phase 2.</li>
+                            <h3 class="text-xl font-semibold mb-3 text-white">Panasonic XH1600 (The "Network" Cam)</h3>
+                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-300">
+                                <li><strong class="text-white">Connection:</strong> Connect camera via Ethernet cable to the same network router/switch as the OBS PC.</li>
+                                <li><strong class="text-white">Camera Settings:</strong> Enable RTSP streaming in the camera's network menu and note its IP address.</li>
+                                <li><strong class="text-white">OBS Source:</strong> Add a `Media Source`. Uncheck 'Local File'.</li>
+                                <li><strong class="text-white">Input:</strong> Enter the camera's RTSP URL (e.g., `rtsp://192.168.1.xxx:554/stream`).</li>
+                                <li><strong class="text-white">Note:</strong> This camera will likely have the most delay (latency). Be prepared to fix this in Phase 2.</li>
                             </ul>
                         </div>
                         <div id="setup-iphones" class="tab-content">
-                            <h3 class="text-xl font-semibold mb-3 text-gray-800">iPhones (The "Cloud" Cams)</h3>
-                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-700">
-                                <li>**Connection:** Connect phones to a reliable, high-speed WiFi network (5GHz preferred) or use 5G/LTE.</li>
-                                <li>**VDO.Ninja Workflow (Stream Tech):**
+                            <h3 class="text-xl font-semibold mb-3 text-white">iPhones (The "Cloud" Cams)</h3>
+                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-300">
+                                <li><strong class="text-white">Connection:</strong> Connect phones to a reliable, high-speed WiFi network (5GHz preferred) or use 5G/LTE.</li>
+                                <li><strong class="text-white">Audio Input (Important):</strong> 
+                                    <ul class="list-disc list-outside pl-5 mt-1 space-y-1">
+                                        <li>Plug the DJI Receiver (Lightning or USB-C) into the phone <strong>BEFORE</strong> opening Safari/VDO.Ninja.</li>
+                                        <li><strong>The Tap Test:</strong> Gently tap the DJI mic (transmitter) while watching the green audio bar on the iPhone screen. If the bar jumps, you are using the external mic. If it only jumps when you tap the phone itself, refresh the page.</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="text-white">VDO.Ninja Workflow (Stream Tech):</strong>
                                     <ol class="list-alpha list-outside pl-5 mt-2 space-y-1">
                                         <li>Go to `vdo.ninja` on the OBS PC and click "Create Room".</li>
                                         <li>Send the invite link (or show the QR code) to the iPhone operators.</li>
@@ -305,7 +294,37 @@
                                         <li>Copy the "View link" for each specific camera from the VDO.Ninja director's panel.</li>
                                     </ol>
                                 </li>
-                                 <li>**OBS Source:** For each iPhone, add a `Browser Source`. Paste the unique VDO.Ninja "View link" into the URL field. Set width/height (e.g., 1920x1080).</li>
+                                 <li><strong class="text-white">OBS Source:</strong> For each iPhone, add a `Browser Source`. Paste the unique VDO.Ninja "View link" into the URL field. Set width/height (e.g., 1920x1080).</li>
+                            </ul>
+                        </div>
+                        <div id="setup-dji" class="tab-content">
+                            <h3 class="text-xl font-semibold mb-3 text-white">DJI Mic Mini 2 (Wireless Audio)</h3>
+                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-300">
+                                <li><strong class="text-white">Receiver (RX) Setup:</strong>
+                                    <ul class="list-disc list-outside pl-5 mt-1 space-y-1">
+                                        <li>Mount the Receiver to the camera's cold shoe.</li>
+                                        <li>Connect the 3.5mm "Out" cable from the Receiver to the Camera's "Mic" input (usually the red port on Sony).</li>
+                                        <li>Ensure the gain on the RX screen is not peaking into the red.</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="text-white">Transmitter (TX) Setup:</strong>
+                                    <ul class="list-disc list-outside pl-5 mt-1 space-y-1">
+                                        <li>Clip the mic to the talent's collar or lapel, about 6-8 inches from their mouth.</li>
+                                        <li>Ensure the green light is solid (paired). If blinking, put back in case and remove again to re-pair.</li>
+                                        <li>Use the fuzzy windscreen if outdoors or near A/C vents.</li>
+                                    </ul>
+                                </li>
+                                <li><strong class="text-white">Monitoring:</strong> The Audio Engineer MUST monitor the levels in OBS. If audio is distorted, lower the gain on the <em>Receiver</em> first, not just in OBS.</li>
+                            </ul>
+                        </div>
+                        <div id="setup-gimbal" class="tab-content">
+                            <h3 class="text-xl font-semibold mb-3 text-white">DJI Osmo Mobile SE (Smartphone Gimbal)</h3>
+                             <ul class="list-decimal list-outside space-y-2 pl-5 text-gray-300">
+                                <li><strong class="text-white">Mounting:</strong> Snap the magnetic phone clamp onto the back of the iPhone. Ensure the DJI logo on the clamp is upright (not upside down).</li>
+                                <li><strong class="text-white">Balancing (Crucial):</strong> <span class="text-red-400">Before powering on</span>, snap the phone onto the gimbal arm. Adjust the position until the phone stays roughly horizontal on its own. If it flops over, the motors will overwork.</li>
+                                <li><strong class="text-white">Power On:</strong> Press and hold the power button (M) until the gimbal snaps to attention.</li>
+                                <li><strong class="text-white">Mode Selection:</strong> Press the M button to cycle modes. Use <strong>"Follow"</strong> (Yellow light usually) for smooth walking shots where the camera follows your pan.</li>
+                                <li><strong class="text-white">Reset:</strong> If the gimbal drifts or looks crooked, double-click the trigger on the back to re-center the phone.</li>
                             </ul>
                         </div>
                     </div>
@@ -314,17 +333,18 @@
 
             <!-- Class Timeline Section -->
             <section id="timeline" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Class Timeline (75 Minutes)</h2>
-                    <p class="mb-6 text-gray-700">Follow this timeline to run the class. Click on each phase to expand its details and objectives.</p>
+                <!-- ... (Content same as previous, omitted for brevity) ... -->
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-[#CFA54D]">Class Timeline (75 Minutes)</h2>
+                    <p class="mb-6 text-gray-300">Follow this timeline to run the class. Click on each phase to expand its details and objectives.</p>
                     <div class="space-y-4" id="timeline-accordion">
                         <div>
-                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition active">
-                                <span class="text-lg font-semibold text-indigo-800">Phase 1: Briefing & Assignments (10 Mins)</span>
-                                <span class="icon text-indigo-600">▼</span>
+                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-[#262626] border border-gray-700 rounded-lg hover:bg-gray-800 transition active">
+                                <span class="text-lg font-semibold text-[#CFA54D]">Phase 1: Briefing & Assignments (10 Mins)</span>
+                                <span class="icon text-gray-400">▼</span>
                             </button>
-                            <div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
-                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-700">
+                            <div class="accordion-content p-4 bg-[#1E1E1E] border border-t-0 border-gray-700 rounded-b-lg">
+                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-300">
                                     <li>Explain the objective: A 5-minute "Morning Show" segment.</li>
                                     <li>Assign roles (use the 'Role Assignments' tab).</li>
                                     <li>Hand out the "Run of Show" (a simple script: Intro → Host Chat → Roaming segment → Outro).</li>
@@ -332,39 +352,39 @@
                             </div>
                         </div>
                         <div>
-                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                                <span class="text-lg font-semibold text-gray-800">Phase 2: Technical Build (25 Mins)</span>
-                                <span class="icon text-gray-600">▼</span>
+                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-[#262626] border border-gray-700 rounded-lg hover:bg-gray-800 transition">
+                                <span class="text-lg font-semibold text-white">Phase 2: Technical Build (25 Mins)</span>
+                                <span class="icon text-gray-400">▼</span>
                             </button>
-                            <div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
-                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-700">
-                                    <li>**Cameras:** Operators set white balance, exposure, and focus.</li>
-                                    <li>**Audio:** Assistants clip DJI mics to talent. Confirm receivers are paired and transmitting to cameras.</li>
-                                    <li>**OBS Construction (Control Room Team):**
+                            <div class="accordion-content p-4 bg-[#1E1E1E] border border-t-0 border-gray-700 rounded-b-lg">
+                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-300">
+                                    <li><strong class="text-white">Cameras:</strong> Operators set white balance, exposure, and focus.</li>
+                                    <li><strong class="text-white">Audio:</strong> Assistants clip DJI mics to talent. Confirm receivers are paired and transmitting to cameras.</li>
+                                    <li><strong class="text-white">OBS Construction (Control Room Team):</strong>
                                         <ul class="list-circle list-outside pl-5 mt-2 space-y-1">
                                             <li>Create 4 Scenes: `Wide Shot`, `Close Up`, `Remote Feed`, `Split Screen`.</li>
                                             <li>Add all camera and audio sources as per the Setup Guide.</li>
                                         </ul>
                                     </li>
-                                    <li class="font-semibold text-red-600 mt-2">**CRITICAL TEACHING MOMENT: The Latency Challenge**
-                                        <ul class="list-circle list-outside pl-5 mt-2 space-y-1 font-normal">
+                                    <li class="font-semibold text-red-400 mt-2">**CRITICAL TEACHING MOMENT: The Latency Challenge**
+                                        <ul class="list-circle list-outside pl-5 mt-2 space-y-1 font-normal text-gray-300">
                                             <li>Have all cameras point at a student clapping their hands.</li>
                                             <li>Observe the OBS Multiview. The Panasonic (RTSP) and iPhones (Web) will likely be behind the Sony (HDMI).</li>
-                                            <li>**Fix:** Add a **Video Delay (Async)** filter to the Sony source. Adjust the milliseconds until it matches the clap on the slowest camera. Repeat for other "fast" sources if needed.</li>
+                                            <li><strong class="text-white">Fix:</strong> Add a **Video Delay (Async)** filter to the Sony source. Adjust the milliseconds until it matches the clap on the slowest camera. Repeat for other "fast" sources if needed.</li>
                                         </ul>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div>
-                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                                <span class="text-lg font-semibold text-gray-800">Phase 3: Dry Run / Rehearsal (15 Mins)</span>
-                                <span class="icon text-gray-600">▼</span>
+                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-[#262626] border border-gray-700 rounded-lg hover:bg-gray-800 transition">
+                                <span class="text-lg font-semibold text-white">Phase 3: Dry Run / Rehearsal (15 Mins)</span>
+                                <span class="icon text-gray-400">▼</span>
                             </button>
-                            <div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
-                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-700">
+                            <div class="accordion-content p-4 bg-[#1E1E1E] border border-t-0 border-gray-700 rounded-b-lg">
+                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-300">
                                     <li>Director practices calling shots.</li>
-                                    <li>**Rule:** The TD does not switch until the Director says "Take."</li>
+                                    <li><strong class="text-white">Rule:</strong> The TD does not switch until the Director says "Take."</li>
                                     <li>Floor Manager practices counting down the Talent silently using fingers.</li>
                                     <li>Test the VDO.Ninja connection by having the "Roaming Cam" walk down the hall and back.</li>
                                     <li>Run the full 5-minute show script once, stop-and-start as needed to fix issues.</li>
@@ -372,13 +392,13 @@
                             </div>
                         </div>
                         <div>
-                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                                <span class="text-lg font-semibold text-gray-800">Phase 4: The Live Broadcast (15 Mins)</span>
-                                <span class="icon text-gray-600">▼</span>
+                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-[#262626] border border-gray-700 rounded-lg hover:bg-gray-800 transition">
+                                <span class="text-lg font-semibold text-white">Phase 4: The Live Broadcast (15 Mins)</span>
+                                <span class="icon text-gray-400">▼</span>
                             </button>
-                            <div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
-                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-700">
-                                    <li>**Record:** Hit "Start Recording" (or "Start Streaming" if going live).</li>
+                            <div class="accordion-content p-4 bg-[#1E1E1E] border border-t-0 border-gray-700 rounded-b-lg">
+                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-300">
+                                    <li><strong class="text-white">Record:</strong> Hit "Start Recording" (or "Start Streaming" if going live).</li>
                                     <li>Execute the 5-minute show from start to finish *without stopping*.</li>
                                     <li>Simulate a "breaking news" interruption (e.g., have the Runner walk on set) to test the team's adaptability.</li>
                                     <li>After the 5-min show, Director calls "Cut" and TD stops the recording.</li>
@@ -386,14 +406,14 @@
                             </div>
                         </div>
                         <div>
-                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                                <span class="text-lg font-semibold text-gray-800">Phase 5: Debrief & Playback (10 Mins)</span>
-                                <span class="icon text-gray-600">▼</span>
+                            <button class="accordion-header flex justify-between items-center w-full p-4 bg-[#262626] border border-gray-700 rounded-lg hover:bg-gray-800 transition">
+                                <span class="text-lg font-semibold text-white">Phase 5: Debrief & Playback (10 Mins)</span>
+                                <span class="icon text-gray-400">▼</span>
                             </button>
-                            <div class="accordion-content p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
-                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-700">
+                            <div class="accordion-content p-4 bg-[#1E1E1E] border border-t-0 border-gray-700 rounded-b-lg">
+                                <ul class="list-disc list-outside space-y-2 pl-5 text-gray-300">
                                     <li>Watch the final recording playback on the projector.</li>
-                                    <li>**Group Critique (Ask the class):**
+                                    <li><strong class="text-white">Group Critique (Ask the class):</strong>
                                         <ul class="list-circle list-outside pl-5 mt-2 space-y-1">
                                             <li>Was the audio synced and levels consistent?</li>
                                             <li>Did the Director and TD communicate clearly and effectively?</li>
@@ -411,49 +431,50 @@
 
             <!-- Troubleshooting Section -->
             <section id="troubleshooting" class="tab-content">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Troubleshooting Cheat Sheet</h2>
-                    <p class="mb-4 text-gray-700">Use this guide for quick fixes during the build or rehearsal. Use the search box to filter by issue.</p>
-                    <input type="text" id="troubleshooting-search" placeholder="Search for an issue..." class="w-full p-2 border border-gray-300 rounded-lg mb-4">
-                    <div class="overflow-x-auto rounded-lg border border-gray-200">
-                        <table class="min-w-full divide-y divide-gray-200" id="troubleshooting-table">
-                            <thead class="bg-gray-50">
+                <!-- ... (Content same as previous, omitted for brevity) ... -->
+                <div class="bg-[#1E1E1E] border border-gray-800 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-[#CFA54D]">Troubleshooting Cheat Sheet</h2>
+                    <p class="mb-4 text-gray-300">Use this guide for quick fixes during the build or rehearsal. Use the search box to filter by issue.</p>
+                    <input type="text" id="troubleshooting-search" placeholder="Search for an issue..." class="w-full p-2 bg-[#121212] border border-gray-700 rounded-lg mb-4 text-white placeholder-gray-500 focus:ring-[#CFA54D] focus:border-[#CFA54D]">
+                    <div class="overflow-x-auto rounded-lg border border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-700" id="troubleshooting-table">
+                            <thead class="bg-[#262626]">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Likely Cause</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solution</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider font-mono">Issue</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider font-mono">Likely Cause</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider font-mono">Solution</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-[#1E1E1E] divide-y divide-gray-700">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">Panasonic video is choppy</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Network congestion or high bitrate</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Lower the bitrate in the Panasonic camera settings or check Ethernet cable. Ensure PC and camera are on the same gigabit switch.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">Panasonic video is choppy</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Network congestion or high bitrate</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Lower the bitrate in the Panasonic camera settings or check Ethernet cable. Ensure PC and camera are on the same gigabit switch.</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">iPhone video freezes</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Poor WiFi signal</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Move iPhone closer to Access Point. Use a 5GHz network, not 2.4GHz. If possible, switch to 4G/5G data.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">iPhone video freezes</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Poor WiFi signal</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Move iPhone closer to Access Point. Use a 5GHz network, not 2.4GHz. If possible, switch to 4G/5G data.</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">Audio echo/feedback</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">OBS Audio Monitoring</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">In OBS Audio Mixer, ensure all sources are set to "Monitor Off". Audio Engineer should use headphones connected to the "Monitor" device. Mute desktop audio.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">Audio echo/feedback</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">OBS Audio Monitoring</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">In OBS Audio Mixer, ensure all sources are set to "Monitor Off". Audio Engineer should use headphones connected to the "Monitor" device. Mute desktop audio.</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">Lip Sync is off</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Different processing times</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Right-click Audio Source in OBS → Advanced Audio Properties → Adjust "Sync Offset" (ms). Add positive delay (e.g., 120ms) to the audio if it's *ahead* of the video.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">Lip Sync is off</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Different processing times</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Right-click Audio Source in OBS → Advanced Audio Properties → Adjust "Sync Offset" (ms). Add positive delay (e.g., 120ms) to the audio if it's *ahead* of the video.</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">Director can't be heard</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">No intercom system</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Use a free group Discord call on phones (with headphones) for a simple "comms" system. Or, Floor Director must be close to Control Room.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">Director can't be heard</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">No intercom system</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Use a free group Discord call on phones (with headphones) for a simple "comms" system. Or, Floor Director must be close to Control Room.</td>
                                 </tr>
                                  <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-600">Sony camera turns off</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">Auto Power Off / Overheating</td>
-                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-700">In camera menu, set "Auto Power OFF Temp." to "High" and "Power OFF Time" to "Do Not Turn Off". Use a dummy battery if possible.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-red-400">Sony camera turns off</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">Auto Power Off / Overheating</td>
+                                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-300">In camera menu, set "Auto Power OFF Temp." to "High" and "Power OFF Time" to "Do Not Turn Off". Use a dummy battery if possible.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -465,6 +486,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- TAB & ACCORDION LOGIC ---
             const mainTabs = document.querySelectorAll('#main-tabs .tab-btn');
             const mainContents = document.querySelectorAll('#main-content .tab-content');
 
@@ -474,25 +496,6 @@
                     mainContents.forEach(c => c.classList.remove('active'));
                     tab.classList.add('active');
                     document.getElementById(tab.dataset.target).classList.add('active');
-                });
-            });
-
-            const roleFilters = document.querySelectorAll('#role-filters .role-filter-btn');
-            const roleCards = document.querySelectorAll('#role-list .role-card');
-
-            roleFilters.forEach(filter => {
-                filter.addEventListener('click', () => {
-                    roleFilters.forEach(f => f.classList.remove('active'));
-                    filter.classList.add('active');
-                    const filterValue = filter.dataset.filter;
-
-                    roleCards.forEach(card => {
-                        if (filterValue === 'all' || card.dataset.team === filterValue) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
                 });
             });
 
@@ -509,7 +512,6 @@
             });
 
             const accordionHeaders = document.querySelectorAll('#timeline-accordion .accordion-header');
-
             accordionHeaders.forEach(header => {
                 header.addEventListener('click', () => {
                     header.classList.toggle('active');
@@ -531,39 +533,153 @@
                 });
             });
 
-            // Logic for Role Assignment Inputs & CSV Export
-            const roleInputs = document.querySelectorAll('.role-input');
-            const exportBtn = document.getElementById('export-btn');
+            // --- DYNAMIC ROLES LOGIC ---
+            
+            const defaultRoles = [
+                { id: 1, role: "Director", desc: "Calls the shots ('Ready Camera 1, Take Camera 1'). The boss.", team: "control", name: "" },
+                { id: 2, role: "Technical Director (TD)", desc: "Operates OBS. Switches scenes *only* on commands.", team: "control", name: "" },
+                { id: 3, role: "Audio Engineer", desc: "Mixes levels in OBS. Manages Master output and mic levels.", team: "control", name: "" },
+                { id: 4, role: "Stream Tech (VDO.Ninja)", desc: "Generates/sends VDO.Ninja links and monitors connections.", team: "control", name: "" },
+                { id: 5, role: "Graphics Operator", desc: "Manages lower thirds, title cards, and overlays in OBS.", team: "control", name: "" },
+                { id: 6, role: "Script Supervisor/Timer", desc: "Counts down segments and ensures Talent stays on topic.", team: "control", name: "" },
+                { id: 7, role: "Floor Director", desc: "Link between Control Room and Studio. Uses hand signals.", team: "floor", name: "" },
+                { id: 8, role: "Talent A (Host)", desc: "Main anchor.", team: "floor", name: "" },
+                { id: 9, role: "Talent B (Co-Host)", desc: "Secondary anchor.", team: "floor", name: "" },
+                { id: 10, role: "Talent C (Field Reporter)", desc: "Remote roaming reporter (using an iPhone).", team: "floor", name: "" },
+                { id: 11, role: "Camera 1 Op (Sony a7iii)", desc: "Main wide/master shot.", team: "floor", name: "" },
+                { id: 12, role: "Camera 1 Assistant", desc: "Focus puller/Cable wrangler.", team: "floor", name: "" },
+                { id: 13, role: "Camera 2 Op (Panasonic)", desc: "Zoom/Telephoto shot.", team: "floor", name: "" },
+                { id: 14, role: "Camera 2 Assistant", desc: "Helps with PTZ or tripod movements.", team: "floor", name: "" },
+                { id: 15, role: "Camera 3 Op (iPhone 1)", desc: "Handheld 'roaming' camera (VDO.Ninja).", team: "floor", name: "" },
+                { id: 16, role: "Camera 3 Grip", desc: "Ensures Op doesn't trip; holds portable light.", team: "floor", name: "" },
+                { id: 17, role: "Camera 4 Op (iPhone 2)", desc: "Dedicated 'Field Reporter' camera (VDO.Ninja).", team: "floor", name: "" },
+                { id: 18, role: "Lighting Director", desc: "Sets up key/fill lights.", team: "floor", name: "" },
+                { id: 19, role: "Audio Assistant 1", desc: "Mics up Talent A/B with DJI transmitters. Checks batteries.", team: "floor", name: "" },
+                { id: 20, role: "Audio Assistant 2", desc: "Mics up Field Reporter.", team: "floor", name: "" },
+                { id: 21, role: "Set Dresser/Props", desc: "Ensures background looks professional.", team: "floor", name: "" },
+                { id: 22, role: "Runner/Utility", desc: "Floater who helps wherever needed (tech issues, etc.).", team: "floor", name: "" }
+            ];
 
-            // Load saved names from localStorage on page load
-            roleInputs.forEach(input => {
-                const roleKey = 'role_' + input.dataset.role.replace(/\s+/g, '_');
-                const savedName = localStorage.getItem(roleKey);
-                if (savedName) {
-                    input.value = savedName;
+            let roles = [];
+
+            function loadRoles() {
+                const storedRoles = localStorage.getItem('workshop_roles_data');
+                if (storedRoles) {
+                    roles = JSON.parse(storedRoles);
+                } else {
+                    roles = JSON.parse(JSON.stringify(defaultRoles)); // Deep copy
+                }
+                renderRoles();
+            }
+
+            function saveRoles() {
+                localStorage.setItem('workshop_roles_data', JSON.stringify(roles));
+            }
+
+            function renderRoles() {
+                const roleList = document.getElementById('role-list');
+                const filter = document.querySelector('.role-filter-btn.active').dataset.filter;
+                
+                roleList.innerHTML = ''; // Clear current
+
+                roles.forEach((role, index) => {
+                    if (filter !== 'all' && role.team !== filter) return;
+
+                    const card = document.createElement('div');
+                    // Styling logic based on team
+                    let borderClass = role.team === 'control' ? 'border-[#CFA54D]' : 'border-gray-700';
+                    let bgClass = role.team === 'control' ? 'bg-[#680017]/20' : 'bg-[#262626]';
+                    let titleColor = role.team === 'control' ? 'text-[#CFA54D]' : 'text-white';
+
+                    card.className = `role-card border ${borderClass} ${bgClass} rounded-lg p-4 relative group`;
+                    
+                    card.innerHTML = `
+                        <button onclick="deleteRole(${index})" class="delete-btn absolute top-2 right-2 text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" title="Delete Role">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <h3 class="font-semibold text-lg ${titleColor}">${role.role}</h3>
+                        <p class="text-sm text-gray-300 mb-2">${role.desc}</p>
+                        <input type="text" 
+                            class="role-input w-full p-2 bg-[#121212] border border-gray-700 rounded text-sm text-white focus:ring-[#CFA54D] focus:border-[#CFA54D] placeholder-gray-600 font-mono" 
+                            placeholder="Enter Student Name" 
+                            value="${role.name}"
+                            oninput="updateRoleName(${index}, this.value)"
+                        >
+                    `;
+                    roleList.appendChild(card);
+                });
+            }
+
+            // Global functions for inline event handlers
+            window.updateRoleName = (index, value) => {
+                roles[index].name = value;
+                saveRoles();
+            };
+
+            window.deleteRole = (index) => {
+                if(confirm('Are you sure you want to remove this role?')) {
+                    roles.splice(index, 1);
+                    saveRoles();
+                    renderRoles();
+                }
+            };
+
+            // Add Role Logic
+            document.getElementById('add-role-btn').addEventListener('click', () => {
+                const title = document.getElementById('new-role-title').value.trim();
+                const desc = document.getElementById('new-role-desc').value.trim();
+                const team = document.getElementById('new-role-team').value;
+
+                if (!title) {
+                    alert("Please enter a Role Title.");
+                    return;
                 }
 
-                // Save to localStorage on every keystroke
-                input.addEventListener('input', (e) => {
-                    localStorage.setItem(roleKey, e.target.value);
+                roles.push({
+                    id: Date.now(), // Unique ID
+                    role: title,
+                    desc: desc,
+                    team: team,
+                    name: ""
+                });
+
+                // Clear inputs
+                document.getElementById('new-role-title').value = '';
+                document.getElementById('new-role-desc').value = '';
+                
+                saveRoles();
+                renderRoles();
+            });
+
+            // Filter Logic
+            const roleFilters = document.querySelectorAll('#role-filters .role-filter-btn');
+            roleFilters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    roleFilters.forEach(f => f.classList.remove('active'));
+                    filter.classList.add('active');
+                    renderRoles();
                 });
             });
 
-            // Export to CSV
-            exportBtn.addEventListener('click', () => {
-                let csvContent = "data:text/csv;charset=utf-8,Role,Team,Student Name\n";
-                
-                roleInputs.forEach(input => {
-                    const roleName = input.dataset.role;
-                    const team = input.dataset.team;
-                    const studentName = input.value.trim() || "Unassigned"; // Default if empty
-                    
-                    // Escape quotes for CSV safety
-                    const safeName = studentName.replace(/"/g, '""'); 
-                    
-                    csvContent += `"${roleName}","${team}","${safeName}"\n`;
-                });
+            // Reset Logic
+            document.getElementById('reset-roles-btn').addEventListener('click', () => {
+                if(confirm('This will delete all custom roles and clear all names. Are you sure?')) {
+                    localStorage.removeItem('workshop_roles_data');
+                    loadRoles();
+                }
+            });
 
+            // Export Logic
+            document.getElementById('export-btn').addEventListener('click', () => {
+                let csvContent = "data:text/csv;charset=utf-8,Role,Team,Student Name\n";
+                roles.forEach(role => {
+                    const studentName = role.name.trim() || "Unassigned";
+                    const safeName = studentName.replace(/"/g, '""');
+                    const teamName = role.team === 'control' ? 'Control Room' : 'Studio Floor';
+                    csvContent += `"${role.role}","${teamName}","${safeName}"\n`;
+                });
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -572,6 +688,9 @@
                 link.click();
                 document.body.removeChild(link);
             });
+
+            // Initial Load
+            loadRoles();
         });
     </script>
 </body>
